@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "pedrixzz.legendaryboots.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PlayerMixin",
+    "AbstractClientPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

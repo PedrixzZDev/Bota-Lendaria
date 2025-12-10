@@ -1,0 +1,39 @@
+package pedrixzz.legendaryboots.item;
+
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LightningEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.World;
+
+public class ThunderHammerItem extends Item {
+    public ThunderHammerItem(Settings settings) {
+        super(settings);
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        if (!world.isClient) {
+            Vec3d start = player.getEyePos();
+            Vec3d end = start.add(player.getRotationVector().multiply(50));
+            BlockHitResult hit = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+            
+            if (hit.getType() == HitResult.Type.BLOCK) {
+                LightningEntity lightning = EntityType.LIGHTNING_BOLT.create(world);
+                if (lightning != null) {
+                    lightning.refreshPositionAfterTeleport(hit.getPos());
+                    world.spawnEntity(lightning);
+                }
+                player.getItemCooldownManager().set(this, 100);
+            }
+        }
+        return TypedActionResult.success(player.getStackInHand(hand));
+    }
+}

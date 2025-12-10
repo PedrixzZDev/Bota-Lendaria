@@ -3,7 +3,7 @@
   "id": "legendaryboots",
   "version": "${version}",
   "name": "LegendaryBoots",
-  "description": "",
+  "description": "Adiciona Relíquias Épicas ao jogo.",
   "authors": [
     "TarikBR",
     "PedrixzZ"
@@ -17,8 +17,14 @@
   "entrypoints": {
     "main": [
       "pedrixzz.legendaryboots.LegendaryBoots"
+    ],
+    "client": [
+      "pedrixzz.legendaryboots.LegendaryBootsClient"
     ]
   },
+  "mixins": [
+    "legendaryboots.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
