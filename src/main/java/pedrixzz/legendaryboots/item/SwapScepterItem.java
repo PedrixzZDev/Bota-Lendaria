@@ -19,7 +19,8 @@ public class SwapScepterItem extends Item {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (!player.getEntityWorld().isClient) {
+        // CORREÇÃO: Adicionado ()
+        if (!player.getEntityWorld().isClient()) {
             double pX = player.getX();
             double pY = player.getY();
             double pZ = player.getZ();
@@ -42,7 +43,8 @@ public class SwapScepterItem extends Item {
             EquipmentSlot slot = (hand == Hand.MAIN_HAND) ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
             stack.damage(1, player, slot);
             
-            player.getItemCooldownManager().set(this, 60);
+            // CORREÇÃO: Passando o ItemStack 'stack'
+            player.getItemCooldownManager().set(stack, 60);
             
             return ActionResult.SUCCESS;
         }

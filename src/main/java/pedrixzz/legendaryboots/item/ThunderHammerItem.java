@@ -22,26 +22,22 @@ public class ThunderHammerItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient) {
+        // CORREÇÃO: Adicionado ()
+        if (!world.isClient()) {
             Vec3d start = player.getEyePos();
             Vec3d end = start.add(player.getRotationVector().multiply(50));
             BlockHitResult hit = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
             
             if (hit.getType() == HitResult.Type.BLOCK && world instanceof ServerWorld serverWorld) {
-                // Tenta criar o raio
                 LightningEntity lightning = EntityType.LIGHTNING_BOLT.create(serverWorld, null, hit.getBlockPos(), SpawnReason.TRIGGERED, true, true);
-                
-                // Fallback de segurança
-                if (lightning == null) {
-                     lightning = EntityType.LIGHTNING_BOLT.create(world, SpawnReason.TRIGGERED);
-                }
                 
                 if (lightning != null) {
                     lightning.refreshPositionAfterTeleport(hit.getPos());
                     world.spawnEntity(lightning);
                 }
                 
-                player.getItemCooldownManager().set(this, 100);
+                // CORREÇÃO: Passando o ItemStack
+                player.getItemCooldownManager().set(player.getStackInHand(hand), 100);
             }
         }
         return ActionResult.SUCCESS;

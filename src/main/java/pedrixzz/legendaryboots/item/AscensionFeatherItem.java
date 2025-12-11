@@ -16,13 +16,13 @@ public class AscensionFeatherItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient) {
+        // CORREÇÃO: Adicionado ()
+        if (!world.isClient()) {
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.LEVITATION, 60, 4));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 140, 0));
             
-            // Usando 'this' (Item) para o cooldown, que é o padrão. 
-            // Se der erro pedindo ItemStack, mude para: player.getStackInHand(hand)
-            player.getItemCooldownManager().set(this, 300);
+            // CORREÇÃO: Passando o ItemStack da mão
+            player.getItemCooldownManager().set(player.getStackInHand(hand), 300);
         }
         return ActionResult.SUCCESS;
     }

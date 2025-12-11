@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
-// CORREÇÃO: Import essencial
 import com.mojang.authlib.GameProfile;
 import java.util.Collection;
 
@@ -35,13 +34,16 @@ public class SoulMirrorScreen extends Screen {
         }).dimensions(x, y - 25, 200, 20).build());
 
         GameProfile myProfile = MinecraftClient.getInstance().player.getGameProfile();
-        String myName = myProfile.getName();
+        
+        // CORREÇÃO: .name()
+        String myName = myProfile.name();
 
         for (PlayerListEntry info : players) {
             GameProfile profile = info.getProfile();
             if (profile == null) continue;
             
-            String pName = profile.getName();
+            // CORREÇÃO: .name()
+            String pName = profile.name();
             
             if (pName == null || pName.equals(myName)) continue;
             

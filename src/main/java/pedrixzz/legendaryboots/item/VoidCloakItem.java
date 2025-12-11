@@ -19,7 +19,8 @@ public class VoidCloakItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient && player instanceof ServerPlayerEntity serverPlayer) {
+        // CORREÇÃO: Adicionado ()
+        if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
             boolean isHidden = player.getCommandTags().contains("reliquias.hidden");
             
             if (!isHidden) {

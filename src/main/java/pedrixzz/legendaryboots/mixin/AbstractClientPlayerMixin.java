@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
-// Import correto conforme seus logs
 import net.minecraft.entity.player.SkinTextures; 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -18,9 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerMixin extends PlayerEntity {
 
-    // Construtor atualizado 1.21.2+
+    // CORREÇÃO: Construtor simplificado (World, GameProfile)
     public AbstractClientPlayerMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+        super(world, gameProfile);
     }
 
     @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
