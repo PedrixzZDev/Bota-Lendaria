@@ -9,7 +9,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.SkinTextures; // Import da 1.21.11
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,7 +25,6 @@ public abstract class PlayerMixin extends LivingEntity implements IDisguiseAcces
         super(entityType, world);
     }
 
-    // 1. Definição da variável sincronizada (DataTracker)
     @Unique
     private static final TrackedData<String> DISGUISE_NAME = 
         DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -40,30 +39,30 @@ public abstract class PlayerMixin extends LivingEntity implements IDisguiseAcces
         return DISGUISE_NAME;
     }
 
-    // 2. Lógica da Skin (Movid para cá porque o método existe em PlayerEntity)
     @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
     private void stealSkin(CallbackInfoReturnable<SkinTextures> cir) {
-        // A lógica de skin só deve rodar no CLIENTE
-        if (this.getWorld().isClient()) {
+        // CORREÇÃO: Usando getEntityWorld() em vez de getWorld()
+        // E acessando .isClient (campo) que é o padrão Yarn 1.21+
+        if (this.getEntityWorld().isClient) {
             try {
-                // Pega o nome do disfarce
+                // Segurança: verifica se o tracker existe
+                if (this.getDataTracker() == null) return;
+
                 String disguiseName = this.getDataTracker().get(DISGUISE_NAME);
 
                 if (disguiseName != null && !disguiseName.isEmpty()) {
                     var client = MinecraftClient.getInstance();
                     
-                    // Verifica se o handler de rede existe
                     if (client.getNetworkHandler() != null) {
                         PlayerListEntry targetInfo = client.getNetworkHandler().getPlayerListEntry(disguiseName);
                         
-                        // Se encontrou o player alvo, usa a skin dele
                         if (targetInfo != null) {
                             cir.setReturnValue(targetInfo.getSkinTextures());
                         }
                     }
                 }
             } catch (Exception e) {
-                // Silencia erros para evitar crash
+                // Silencia erros
             }
         }
     }
