@@ -3,8 +3,7 @@
   "package": "pedrixzz.legendaryboots.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "PlayerMixin",
-    "AbstractClientPlayerMixin"
+    "PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
