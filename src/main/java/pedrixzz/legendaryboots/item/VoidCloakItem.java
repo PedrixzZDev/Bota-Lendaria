@@ -9,7 +9,7 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.InteractionResultHolder;
 import net.minecraft.world.World;
 
 public class VoidCloakItem extends Item {
@@ -18,8 +18,7 @@ public class VoidCloakItem extends Item {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        // CORREÇÃO: Uso de parenteses .isClient()
+    public InteractionResultHolder<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
             boolean isHidden = player.getCommandTags().contains("reliquias.hidden");
             
@@ -40,6 +39,6 @@ public class VoidCloakItem extends Item {
                 player.sendMessage(Text.literal("§f[Vazio] Você retornou."), true);
             }
         }
-        return TypedActionResult.success(player.getStackInHand(hand));
+        return InteractionResultHolder.success(player.getStackInHand(hand));
     }
 }

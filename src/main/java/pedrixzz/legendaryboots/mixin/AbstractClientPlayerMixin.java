@@ -17,11 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerMixin extends PlayerEntity {
 
-    // CORREÇÃO: Construtor ajustado para o que o seu erro pediu (World, GameProfile)
+    // CORREÇÃO 1.21.11: O erro indicou que o construtor agora pede apenas World e GameProfile
     public AbstractClientPlayerMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile); 
-        // Nota: Se der erro de novo pedindo (World, BlockPos, float, GameProfile), 
-        // reverta para: super(world, pos, yaw, gameProfile);
+        super(world, gameProfile);
     }
 
     @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)

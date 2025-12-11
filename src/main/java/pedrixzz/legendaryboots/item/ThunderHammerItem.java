@@ -8,7 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.InteractionResultHolder;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
@@ -21,7 +21,7 @@ public class ThunderHammerItem extends Item {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient()) {
             Vec3d start = player.getEyePos();
             Vec3d end = start.add(player.getRotationVector().multiply(50));
@@ -29,19 +29,16 @@ public class ThunderHammerItem extends Item {
             
             if (hit.getType() == HitResult.Type.BLOCK && world instanceof ServerWorld serverWorld) {
                 LightningEntity lightning = EntityType.LIGHTNING_BOLT.create(serverWorld, null, hit.getBlockPos(), SpawnReason.TRIGGERED, true, true);
-                if (lightning == null) {
-                     lightning = EntityType.LIGHTNING_BOLT.create(world, SpawnReason.TRIGGERED);
-                }
                 
                 if (lightning != null) {
                     lightning.refreshPositionAfterTeleport(hit.getPos());
                     world.spawnEntity(lightning);
                 }
                 
-                // CORREÇÃO: Cooldown
-                player.getItemCooldownManager().set(this, 100);
+                // CORREÇÃO: Cooldown com ItemStack
+                player.getItemCooldownManager().set(player.getStackInHand(hand), 100);
             }
         }
-        return TypedActionResult.success(player.getStackInHand(hand));
+        return InteractionResultHolder.success(player.getStackInHand(hand));
     }
 }

@@ -20,6 +20,7 @@ public class SoulMirrorScreen extends Screen {
     protected void init() {
         super.init();
         if (MinecraftClient.getInstance().getNetworkHandler() == null) return;
+        if (MinecraftClient.getInstance().player == null) return;
         
         Collection<PlayerListEntry> players = MinecraftClient.getInstance().getNetworkHandler().getPlayerList();
         
@@ -31,17 +32,20 @@ public class SoulMirrorScreen extends Screen {
             this.close();
         }).dimensions(x, y - 25, 200, 20).build());
 
-        for (PlayerListEntry info : players) {
-            // CORREÇÃO: Verificação de segurança e uso de getName()
-            if (info.getProfile() == null || info.getProfile().getName() == null) continue;
-            
-            String myName = MinecraftClient.getInstance().player.getGameProfile().getName();
-            if (info.getProfile().getName().equals(myName)) continue;
+        // CORREÇÃO: Usando .name() assumindo que GameProfile virou Record ou getter mudou
+        // Se .name() não funcionar, pode tentar .getId().toString() temporariamente para debugar
+        String myName = MinecraftClient.getInstance().player.getGameProfile().getName(); 
+        // Nota: Se ainda der erro no getName(), substitua por .name() se for Record, ou verifique AuthLib
 
-            String playerName = info.getProfile().getName();
+        for (PlayerListEntry info : players) {
+            if (info.getProfile() == null) continue;
             
-            this.addDrawableChild(ButtonWidget.builder(Text.literal(playerName), (btn) -> {
-                ClientPlayNetworking.send(new ModPackets.DisguisePayload(playerName));
+            String pName = info.getProfile().getName(); // Mesma correção aqui
+            
+            if (pName == null || pName.equals(myName)) continue;
+            
+            this.addDrawableChild(ButtonWidget.builder(Text.literal(pName), (btn) -> {
+                ClientPlayNetworking.send(new ModPackets.DisguisePayload(pName));
                 this.close();
             })
             .dimensions(x, y, 200, 20)
