@@ -4,6 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
@@ -18,17 +19,27 @@ public class SwapScepterItem extends Item {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (!player.getWorld().isClient) {
+        if (!player.getWorld().isClient()) {
             Vec3d playerPos = player.getPos();
             Vec3d targetPos = entity.getPos();
 
-            player.teleport(targetPos.x, targetPos.y, targetPos.z);
-            entity.teleport(playerPos.x, playerPos.y, playerPos.z);
+            // Teleporte corrigido para 1.21
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                serverPlayer.requestTeleport(targetPos.x, targetPos.y, targetPos.z);
+            } else {
+                player.teleport(targetPos.x, targetPos.y, targetPos.z, false);
+            }
+
+            // Entidades usam teleport com booleano (efeitos de particula)
+            entity.teleport(playerPos.x, playerPos.y, playerPos.z, false);
 
             player.getWorld().playSound(null, player.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0f, 1.0f);
             player.sendMessage(Text.literal("§bTroca realizada!"), true);
+            
             stack.damage(1, player, LivingEntity.getSlotForHand(hand));
-            player.getItemCooldownManager().set(this, 60);
+            
+            // Cast explícito para Item
+            player.getItemCooldownManager().set((Item)this, 60);
             
             return ActionResult.SUCCESS;
         }

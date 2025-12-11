@@ -1,20 +1,16 @@
 package pedrixzz.legendaryboots.item;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import java.util.List;
 
 public class VoidCloakItem extends Item {
     public VoidCloakItem(Settings settings) {
@@ -23,8 +19,7 @@ public class VoidCloakItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient && player instanceof ServerPlayerEntity serverPlayer) {
-            // Lógica simplificada de toggle usando tag customizada no player
+        if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
             boolean isHidden = player.getCommandTags().contains("reliquias.hidden");
             
             if (!isHidden) {
@@ -33,10 +28,9 @@ public class VoidCloakItem extends Item {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 999999, 0, false, false));
                 player.setInvisible(true);
                 
-                // Hack para remover do TAB
+                // Hack para remover do TAB (Visual)
                 var removePacket = new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_LISTED, serverPlayer);
-                // Nota: Manipular o TAB perfeitamente no Fabric requer mixins complexos no PlayerList.
-                // Vou usar invisibilidade total aqui.
+                serverPlayer.networkHandler.sendPacket(removePacket);
                 
                 player.sendMessage(Text.literal("§8[Vazio] Você desapareceu."), true);
             } else {

@@ -16,7 +16,7 @@ public class SoulMirrorItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        if (world.isClient) {
+        if (world.isClient()) { // Usando método isClient() se o campo for privado
             MinecraftClient.getInstance().setScreen(new SoulMirrorScreen());
         }
         return TypedActionResult.success(player.getStackInHand(hand));
