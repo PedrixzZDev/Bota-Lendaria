@@ -32,7 +32,11 @@ public class SoulMirrorScreen extends Screen {
         }).dimensions(x, y - 25, 200, 20).build());
 
         for (PlayerListEntry info : players) {
-            if (info.getProfile().getName().equals(MinecraftClient.getInstance().player.getGameProfile().getName())) continue;
+            // CORREÇÃO: Verificação de segurança e uso de getName()
+            if (info.getProfile() == null || info.getProfile().getName() == null) continue;
+            
+            String myName = MinecraftClient.getInstance().player.getGameProfile().getName();
+            if (info.getProfile().getName().equals(myName)) continue;
 
             String playerName = info.getProfile().getName();
             

@@ -19,7 +19,10 @@ public class AscensionFeatherItem extends Item {
         if (!world.isClient()) {
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.LEVITATION, 60, 4));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 140, 0));
-            player.getItemCooldownManager().set((Item)this, 300);
+            
+            // CORREÇÃO: Passando Item em vez de ItemStack para compatibilidade
+            // Se o erro persistir dizendo que quer ItemStack, troque por: player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 300);
+            player.getItemCooldownManager().set(this, 300);
         }
         return TypedActionResult.success(player.getStackInHand(hand));
     }

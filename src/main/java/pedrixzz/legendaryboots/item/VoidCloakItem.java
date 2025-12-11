@@ -19,22 +19,20 @@ public class VoidCloakItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        // CORREÇÃO: Uso de parenteses .isClient()
         if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
             boolean isHidden = player.getCommandTags().contains("reliquias.hidden");
             
             if (!isHidden) {
-                // ESCONDER
                 player.addCommandTag("reliquias.hidden");
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 999999, 0, false, false));
                 player.setInvisible(true);
                 
-                // Hack para remover do TAB (Visual)
                 var removePacket = new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_LISTED, serverPlayer);
                 serverPlayer.networkHandler.sendPacket(removePacket);
                 
                 player.sendMessage(Text.literal("§8[Vazio] Você desapareceu."), true);
             } else {
-                // REAPARECER
                 player.removeCommandTag("reliquias.hidden");
                 player.removeStatusEffect(StatusEffects.INVISIBILITY);
                 player.setInvisible(false);

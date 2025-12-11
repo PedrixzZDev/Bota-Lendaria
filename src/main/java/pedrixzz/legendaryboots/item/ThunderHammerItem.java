@@ -28,9 +28,7 @@ public class ThunderHammerItem extends Item {
             BlockHitResult hit = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
             
             if (hit.getType() == HitResult.Type.BLOCK && world instanceof ServerWorld serverWorld) {
-                // Create corrigido exigindo SpawnReason na 1.21
                 LightningEntity lightning = EntityType.LIGHTNING_BOLT.create(serverWorld, null, hit.getBlockPos(), SpawnReason.TRIGGERED, true, true);
-                // Ou alternativamente apenas spawn se o create falhar:
                 if (lightning == null) {
                      lightning = EntityType.LIGHTNING_BOLT.create(world, SpawnReason.TRIGGERED);
                 }
@@ -39,7 +37,9 @@ public class ThunderHammerItem extends Item {
                     lightning.refreshPositionAfterTeleport(hit.getPos());
                     world.spawnEntity(lightning);
                 }
-                player.getItemCooldownManager().set((Item)this, 100);
+                
+                // CORREÇÃO: Cooldown
+                player.getItemCooldownManager().set(this, 100);
             }
         }
         return TypedActionResult.success(player.getStackInHand(hand));
