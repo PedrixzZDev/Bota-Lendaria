@@ -21,20 +21,28 @@ public abstract class AbstractClientPlayerMixin extends PlayerEntity {
         super(world, gameProfile);
     }
 
-    // CORREÇÃO: Adicionei a assinatura completa ()Lnet/minecraft/entity/player/SkinTextures;
-    // Isso ajuda o remapper a encontrar o método exato mesmo se houver confusão de nomes.
-    @Inject(method = "getSkinTextures()Lnet/minecraft/entity/player/SkinTextures;", at = @At("HEAD"), cancellable = true)
+    // CORREÇÃO: Removida a assinatura complexa. Usar apenas o nome do método.
+    // O Fabric Loom vai gerar o mapa de referência (refmap) automaticamente para encontrar o método certo.
+    @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
     private void stealSkin(CallbackInfoReturnable<SkinTextures> cir) {
         if (this instanceof IDisguiseAccessor accessor) {
-            String disguiseName = this.getDataTracker().get(accessor.getDisguiseDataId());
+            // Verifica se o DataTracker está inicializado para evitar crash no construtor
+            if (this.getDataTracker() == null) return;
 
-            if (disguiseName != null && !disguiseName.isEmpty()) {
-                if (MinecraftClient.getInstance().getNetworkHandler() != null) {
-                    PlayerListEntry targetInfo = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(disguiseName);
-                    if (targetInfo != null) {
-                        cir.setReturnValue(targetInfo.getSkinTextures());
+            // Tenta pegar o ID. Se falhar, ignora.
+            try {
+                String disguiseName = this.getDataTracker().get(accessor.getDisguiseDataId());
+
+                if (disguiseName != null && !disguiseName.isEmpty()) {
+                    if (MinecraftClient.getInstance().getNetworkHandler() != null) {
+                        PlayerListEntry targetInfo = MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(disguiseName);
+                        if (targetInfo != null) {
+                            cir.setReturnValue(targetInfo.getSkinTextures());
+                        }
                     }
                 }
+            } catch (Exception e) {
+                // Silencia erros durante a renderização para não crashar o jogo por causa de skin
             }
         }
     }
