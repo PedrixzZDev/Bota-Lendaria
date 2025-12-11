@@ -1,5 +1,6 @@
 package pedrixzz.legendaryboots.item;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -18,7 +19,7 @@ public class SwapScepterItem extends Item {
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (!player.getEntityWorld().isClient()) {
+        if (!player.getEntityWorld().isClient) {
             double pX = player.getX();
             double pY = player.getY();
             double pZ = player.getZ();
@@ -38,10 +39,10 @@ public class SwapScepterItem extends Item {
             player.getEntityWorld().playSound(null, player.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0f, 1.0f);
             player.sendMessage(Text.literal("§bTroca realizada!"), true);
             
-            stack.damage(1, player, LivingEntity.getSlotForHand(hand));
+            EquipmentSlot slot = (hand == Hand.MAIN_HAND) ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+            stack.damage(1, player, slot);
             
-            // CORREÇÃO: Cooldown com ItemStack
-            player.getItemCooldownManager().set(stack, 60);
+            player.getItemCooldownManager().set(this, 60);
             
             return ActionResult.SUCCESS;
         }

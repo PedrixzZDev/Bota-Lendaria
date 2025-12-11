@@ -8,8 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.InteractionResultHolder;
 import net.minecraft.world.World;
 
 public class VoidCloakItem extends Item {
@@ -18,8 +18,8 @@ public class VoidCloakItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient() && player instanceof ServerPlayerEntity serverPlayer) {
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
+        if (!world.isClient && player instanceof ServerPlayerEntity serverPlayer) {
             boolean isHidden = player.getCommandTags().contains("reliquias.hidden");
             
             if (!isHidden) {
@@ -39,6 +39,6 @@ public class VoidCloakItem extends Item {
                 player.sendMessage(Text.literal("§f[Vazio] Você retornou."), true);
             }
         }
-        return InteractionResultHolder.success(player.getStackInHand(hand));
+        return ActionResult.SUCCESS;
     }
 }

@@ -8,6 +8,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
+// CORREÇÃO: Import essencial
+import com.mojang.authlib.GameProfile;
 import java.util.Collection;
 
 public class SoulMirrorScreen extends Screen {
@@ -32,15 +34,14 @@ public class SoulMirrorScreen extends Screen {
             this.close();
         }).dimensions(x, y - 25, 200, 20).build());
 
-        // CORREÇÃO: Usando .name() assumindo que GameProfile virou Record ou getter mudou
-        // Se .name() não funcionar, pode tentar .getId().toString() temporariamente para debugar
-        String myName = MinecraftClient.getInstance().player.getGameProfile().getName(); 
-        // Nota: Se ainda der erro no getName(), substitua por .name() se for Record, ou verifique AuthLib
+        GameProfile myProfile = MinecraftClient.getInstance().player.getGameProfile();
+        String myName = myProfile.getName();
 
         for (PlayerListEntry info : players) {
-            if (info.getProfile() == null) continue;
+            GameProfile profile = info.getProfile();
+            if (profile == null) continue;
             
-            String pName = info.getProfile().getName(); // Mesma correção aqui
+            String pName = profile.getName();
             
             if (pName == null || pName.equals(myName)) continue;
             
