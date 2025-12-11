@@ -17,12 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerMixin extends PlayerEntity {
 
-    // CORREÇÃO: Construtor simplificado (World, GameProfile)
     public AbstractClientPlayerMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, gameProfile);
     }
 
-    @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
+    // CORREÇÃO: Adicionei a assinatura completa ()Lnet/minecraft/entity/player/SkinTextures;
+    // Isso ajuda o remapper a encontrar o método exato mesmo se houver confusão de nomes.
+    @Inject(method = "getSkinTextures()Lnet/minecraft/entity/player/SkinTextures;", at = @At("HEAD"), cancellable = true)
     private void stealSkin(CallbackInfoReturnable<SkinTextures> cir) {
         if (this instanceof IDisguiseAccessor accessor) {
             String disguiseName = this.getDataTracker().get(accessor.getDisguiseDataId());
