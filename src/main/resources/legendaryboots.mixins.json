@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "PlayerMixin",
-    "AbstractClientPlayerMixin"
+    "abstractClientPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
